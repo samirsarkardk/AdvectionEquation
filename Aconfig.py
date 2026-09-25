@@ -15,11 +15,19 @@ class Config:
         self.num_epochs = 150
         self.learning_rate = 0.001
 
-        # Model Parameters
+        # Model Parameters for main pinn networks
         self.input_dim = 2
         self.hidden_dim = 20
         self.output_dim = 1
         self.num_hidden_layers = 3
+
+
+        # Model parameters for mini pinn networks
+        self.minput_dim = 2
+        self.mhidden_dim = 15
+        self.moutput_dim = 1
+        self.mnum_hidden_layers = 3
+
 
         # Domain Specifications
         self.x_min = 0.0
