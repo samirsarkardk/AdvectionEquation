@@ -53,7 +53,7 @@ def interface8(x):
 
 
 # ============================================================
-# Define triangular subdomain
+# Define the domain omega1
 # ============================================================
 
 def omega1(N):
@@ -76,6 +76,42 @@ def omega1(N):
 
     # Generate t between lower boundary and t = 1
     t = t_lower + torch.rand(N, 1) * (1.0 - t_lower)
+
+    return x, t
+
+
+# ============================================================
+# Define the domain of omega2
+# ============================================================
+
+def omega2(N):
+    """
+    Generate N random points inside the domain bounded by
+
+        t = 1
+        t = 0.050*x + 0.90
+        t = 0.044*x + 0.80
+
+    with x in [0, 4.545].
+    """
+
+    # Generate x
+    x = 4.545 * torch.rand(N, 1)
+
+    # Lower boundary
+    t_lower = interface2(x)
+
+    # Upper boundary
+    t_upper = interface1(x)
+
+    # After x = 2, the upper boundary is t = 1
+    t_upper = torch.minimum(
+        t_upper,
+        torch.ones_like(x)
+    )
+
+    # Generate t between lower and upper boundary
+    t = t_lower + torch.rand(N, 1) * (t_upper - t_lower)
 
     return x, t
 
@@ -159,41 +195,6 @@ plt.show()
 import torch
 import matplotlib.pyplot as plt
 
-
-# ============================================================
-# Define the domain
-# ============================================================
-
-def omega2(N):
-    """
-    Generate N random points inside the domain bounded by
-
-        t = 1
-        t = 0.050*x + 0.90
-        t = 0.044*x + 0.80
-
-    with x in [0, 4.545].
-    """
-
-    # Generate x
-    x = 4.545 * torch.rand(N, 1)
-
-    # Lower boundary
-    t_lower = interface2(x)
-
-    # Upper boundary
-    t_upper = interface1(x)
-
-    # After x = 2, the upper boundary is t = 1
-    t_upper = torch.minimum(
-        t_upper,
-        torch.ones_like(x)
-    )
-
-    # Generate t between lower and upper boundary
-    t = t_lower + torch.rand(N, 1) * (t_upper - t_lower)
-
-    return x, t
 
 
 # ============================================================
