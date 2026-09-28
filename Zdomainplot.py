@@ -82,7 +82,7 @@ plt.title("100 Points in Triangular Subdomain")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 import torch
 import matplotlib.pyplot as plt
@@ -187,7 +187,7 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 # omega3 points generation and plot
 
@@ -257,7 +257,7 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 # omega4 points generation and plot
 
@@ -320,7 +320,7 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 # omega5 points generation and plot
 
@@ -383,7 +383,7 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 # omega6 points generation and plot
 
@@ -446,8 +446,6 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
-
 # omega7 points generation and plot
 
 x,t = omega7(100)
@@ -509,7 +507,7 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 # omega8 points generation and plot
 
@@ -572,7 +570,7 @@ plt.title("Domain with 100 Interior Points")
 plt.grid(True)
 plt.legend()
 
-plt.show()
+
 
 # omega9
 
@@ -619,4 +617,157 @@ plt.title("100 points in omega4")
 
 plt.grid(True)
 plt.legend()
+plt.show()
+
+
+
+
+# ============================================================
+# Create ONE figure
+# ============================================================
+
+plt.figure(figsize=(12, 6))
+
+
+# ============================================================
+# omega1
+# ============================================================
+
+x, t = omega1(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega1"
+)
+
+
+# ============================================================
+# omega2
+# ============================================================
+
+x, t = omega2(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega2"
+)
+
+
+# ============================================================
+# omega3
+# ============================================================
+
+x, t = omega3(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega3"
+)
+
+
+# ============================================================
+# omega4
+# ============================================================
+
+x, t = omega4(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega4"
+)
+
+
+# ============================================================
+# omega5
+# ============================================================
+
+x, t = omega5(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega5"
+)
+
+
+# ============================================================
+# omega6
+# ============================================================
+
+x, t = omega6(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega6"
+)
+
+
+# ============================================================
+# omega7
+# ============================================================
+
+x, t = omega7(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega7"
+)
+
+
+# ============================================================
+# omega8
+# ============================================================
+
+x, t = omega8(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega8"
+)
+
+
+# ============================================================
+# omega9
+# ============================================================
+
+x, t = omega9(100)
+
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    s=20,
+    label="omega9"
+)
+
+
+# ============================================================
+# Plot limits
+# ============================================================
+
+plt.xlim(0, 2 * np.pi)
+plt.ylim(0, 1)
+
+plt.xlabel("x")
+plt.ylabel("t")
+
+plt.title("XPINN Domain Decomposition")
+
+plt.grid(True)
+plt.legend()
+
 plt.show()
