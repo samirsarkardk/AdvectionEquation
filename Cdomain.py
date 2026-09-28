@@ -226,3 +226,58 @@ def omega9(N):
 
     return x,t
 
+def linedomain1(N):
+    x = torch.linspace(0,2, steps=N)
+    t = interface1(x)
+    return x,t
+
+def linedomain2(N):
+    x = torch.linspace(0,4.545, steps=N)
+    t = interface2(x)
+    return x,t
+
+def linedomain3(N):
+    x = torch.linspace(0,2 * torch.pi,steps=N)
+    t = interface3(x)
+    return x,t
+
+def linedomain4(N):
+    x = torch.linspace(0,2 * torch.pi,steps=N)
+    t = interface4(x)
+    return x,t
+
+def linedomain5(N):
+    x = torch.linspace(0,2 * torch.pi,steps=N)
+    t = interface5(x)
+    return x,t
+
+def linedomain6(N):
+    x = torch.linspace(0,2 * torch.pi,steps=N)
+    t = interface6(x)
+    return x,t
+
+def linedomain7(N):
+    x = torch.linspace(0,2 * torch.pi,steps=N)
+    t = interface7(x)
+    return x,t
+
+
+def linedomain8(N):
+    x = torch.linspace(3,2 * torch.pi,steps=N)
+    t = interface8(x)
+    return x,t
+
+
+x,t = linedomain8(100)
+plt.scatter(
+    x.numpy(),
+    t.numpy(),
+    linewidths= 2,
+    label=r"100 points in the doamin"
+)
+
+plt.xlim(0,2 * np.pi)
+plt.ylim(0,1)
+plt.grid(True)
+plt.legend()
+plt.show()
