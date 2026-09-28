@@ -19,10 +19,11 @@ from Cdomain import (omega9,omega8,omega7,
 config = Config()
 
 
-def InitialCondition(x,t):
+def InitialCondition(x,t,u):
     x = x.clone().detach().requires_grad_(True)
     t = t.clone().detach().requires_grad_(True)
-    loss = nn.MSELoss()(torch.sin(x), torch.zeros_like(x))
+    u = t.clone().detach().requires_grad_(True)
+    loss = nn.MSELoss()(torch.sin(x), u)
     return loss
 
 def Residual(model, x ,t):
@@ -94,7 +95,8 @@ def Omega8Loss(x,t,N,M):
     t_i = torch.zeros_like(x_i)
     x_i.requires_grad_(True)
     t_i.requires_grad_(True)
-    InitialLoss = InitialCondition(x_i,t_i)
+    u_i = model(x_i,t_i)
+    InitialLoss = InitialCondition(x_i,t_i,u_i)
     loss = residual + InitialLoss
     return loss
 
@@ -106,8 +108,7 @@ def Omega9Loss(x,t,N,M):
     t_i = torch.zeros_like(x_i)
     x_i.requires_grad_(True)
     t_i.requires_grad_(True)
-    InitialLoss = InitialCondition(x_i,t_i)
+    u_i = model(x_i,t_i)
+    InitialLoss = InitialCondition(x_i,t_i,u_i)
     loss = residual + InitialLoss
     return loss
-D = Omega9Loss(torch.tensor(2), torch.tensor(3),100,100)
-print(D)
