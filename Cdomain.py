@@ -115,184 +115,114 @@ def omega2(N):
 
     return x, t
 
+def omega3(N):
+    """
+    Generate N random points inside the domain bounded by
 
-# ============================================================
-# Call the function
-# ============================================================
+        t = 1
+        t = interface2(x)
+        t = interface3(x)
 
-x, t = omega1(100)
+    with x in [0, 2 * np.pi].
+    """
 
+    # Generate x
+    x = 2 * np.pi * torch.rand(N, 1)
 
-# ============================================================
-# Combine x and t for PINN input
-# ============================================================
+    # Lower boundary
+    t_lower = interface3(x)
 
-X = torch.cat([x, t], dim=1)
+    # Upper boundary
+    t_upper = interface2(x)
 
-print("X shape:", X.shape)
-print(X[:10])
+    # After x = 2, the upper boundary is t = 1
+    t_upper = torch.minimum(
+        t_upper,
+        torch.ones_like(x)
+    )
 
+    # Generate t between lower and upper boundary
+    t = t_lower + torch.rand(N, 1) * (t_upper - t_lower)
 
-# ============================================================
-# Plot
-# ============================================================
+    return x, t
 
-plt.figure(figsize=(9, 5))
+def omega4(N):
+    x = 2 * np.pi * torch.rand(N,1)
 
-# 100 interior points
-plt.scatter(
-    x.numpy(),
-    t.numpy(),
-    s=25,
-    label="100 interior points"
-)
+    # t lower
+    t_lower = interface4(x)
 
-# Boundary x = 0
-plt.plot(
-    [0, 0],
-    [0.90, 1.0],
-    linewidth=2,
-    label=r"$x=0$"
-)
+    # t upper
+     
+    t_upper = interface3(x)
+    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-# Boundary t = 1
-plt.plot(
-    [0, 2],
-    [1, 1],
-    linewidth=2,
-    label=r"$t=1$"
-)
+    return x,t
 
-# Boundary t = 0.050x + 0.90
-x_line = torch.linspace(0, 2, 200)
-t_line = 0.050 * x_line + 0.90
+def omega5(N):
+    x = 2 * np.pi * torch.rand(N,1)
 
-plt.plot(
-    x_line.numpy(),
-    t_line.numpy(),
-    linewidth=2,
-    label=r"$t=0.050x+0.90$"
-)
+    # t lower
+    t_lower = interface5(x)
 
-# Full physical domain shown on x-axis
-plt.xlim(0, 2 * torch.pi)
-plt.ylim(0, 1)
+    # t upper
+     
+    t_upper = interface4(x)
+    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-plt.xticks(
-    [0, torch.pi, 2 * torch.pi],
-    [r"$0$", r"$\pi$", r"$2\pi$"]
-)
+    return x,t
 
-plt.xlabel("x")
-plt.ylabel("t")
-plt.title("100 Points in Triangular Subdomain")
+def omega6(N):
+    x = 2 * np.pi * torch.rand(N,1)
 
-plt.grid(True)
-plt.legend()
+    # t lower
+    t_lower = interface6(x)
 
-plt.show()
+    # t upper
+     
+    t_upper = interface5(x)
+    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-import torch
-import matplotlib.pyplot as plt
+    return x,t
 
+def omega7(N):
+    x = 2 * np.pi * torch.rand(N,1)
 
+    # t lower
+    t_lower = interface7(x)
 
-# ============================================================
-# Generate 100 points
-# ============================================================
+    # t upper
+     
+    t_upper = interface6(x)
+    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-x, t = omega2(100)
+    return x,t
 
-# PINN input
-X = torch.cat([x, t], dim=1)
+def omega8(N):
+    x = 2 * np.pi * torch.rand(N,1)
 
-print("X shape:", X.shape)
+    # t lower
+    t_lower_1 = interface8(x)
 
-print("\nFirst 10 points:")
-print(X[:10])
+    t_lower = torch.maximum(t_lower_1, torch.zeros_like(t_lower_1))
 
+    # t upper
+     
+    t_upper = interface7(x)
+    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-# ============================================================
-# Plot
-# ============================================================
+    return x,t
 
-plt.figure(figsize=(10, 5))
+def omega9(N):
+    x = 3 + 2 * torch.pi * torch.rand(N,1)
 
-# Interior points
-plt.scatter(
-    x.numpy(),
-    t.numpy(),
-    s=25,
-    label="100 interior points"
-)
+    # t lower
+    t_lower = torch.zeros_like(x)
 
+    # t upper
+     
+    t_upper = interface8(x)
+    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-# ------------------------------------------------------------
-# Boundary: t = 1
-# ------------------------------------------------------------
+    return x,t
 
-plt.plot(
-    [2, 4.545],
-    [1, 1],
-    linewidth=2,
-    label=r"$t=1$"
-)
-
-
-# ------------------------------------------------------------
-# Boundary: t = 0.050*x + 0.90
-# ------------------------------------------------------------
-
-x1 = torch.linspace(0, 2, 200)
-t1 = interface1(x1)
-
-plt.plot(
-    x1.numpy(),
-    t1.numpy(),
-    linewidth=2,
-    label=r"$t=0.050x+0.90$"
-)
-
-
-# ------------------------------------------------------------
-# Boundary: t = 0.044*x + 0.80
-# ------------------------------------------------------------
-
-x2 = torch.linspace(0, 4.545, 200)
-t2 = interface2(x2)
-
-plt.plot(
-    x2.numpy(),
-    t2.numpy(),
-    linewidth=2,
-    label=r"$t=0.044x+0.80$"
-)
-
-
-# ------------------------------------------------------------
-# Boundary: x = 0
-# ------------------------------------------------------------
-
-plt.plot(
-    [0, 0],
-    [0.80, 0.90],
-    linewidth=2,
-    label=r"$x=0$"
-)
-
-
-# ------------------------------------------------------------
-# Plot limits
-# ------------------------------------------------------------
-
-plt.xlim(0, 2 * np.pi)
-plt.ylim(0.0, 1.0)
-
-plt.xlabel("x")
-plt.ylabel("t")
-plt.title("Domain with 100 Interior Points")
-
-plt.grid(True)
-plt.legend()
-
-plt.show()
