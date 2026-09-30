@@ -214,7 +214,7 @@ def omega8(N):
     return x,t
 
 def omega9(N):
-    x = 3 + 2 * torch.pi * torch.rand(N,1)
+    x = 3 + (2 * torch.pi -3) * torch.rand(N,1)
 
     # t lower
     t_lower = torch.zeros_like(x)
