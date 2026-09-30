@@ -55,62 +55,24 @@ def interface8(x):
 # ============================================================
 # Define the domain omega1
 # ============================================================
-
 def omega1(N):
-    """
-    Generate N random points inside the triangular subdomain
-
-        0 <= x <= 2
-        0.050*x + 0.90 <= t <= 1
-
-    Returns:
-        x : shape (N, 1)
-        t : shape (N, 1)
-    """
-
-    # Generate x
     x = 2.0 * torch.rand(N, 1)
 
-    # Lower boundary
     t_lower = interface1(x)
+    t_upper = torch.ones_like(x)
 
-    # Generate t between lower boundary and t = 1
-    t = t_lower + torch.rand(N, 1) * (1.0 - t_lower)
+    t = t_lower + torch.rand(N, 1) * (t_upper - t_lower)
 
     return x, t
 
 
-# ============================================================
-# Define the domain of omega2
-# ============================================================
-
 def omega2(N):
-    """
-    Generate N random points inside the domain bounded by
+    x2_max = (1.0 - 0.80) / 0.044
+    x = x2_max * torch.rand(N, 1)
 
-        t = 1
-        t = 0.050*x + 0.90
-        t = 0.044*x + 0.80
-
-    with x in [0, 4.545].
-    """
-
-    # Generate x
-    x = 4.545 * torch.rand(N, 1)
-
-    # Lower boundary
     t_lower = interface2(x)
+    t_upper = torch.minimum(interface1(x), torch.ones_like(x))
 
-    # Upper boundary
-    t_upper = interface1(x)
-
-    # After x = 2, the upper boundary is t = 1
-    t_upper = torch.minimum(
-        t_upper,
-        torch.ones_like(x)
-    )
-
-    # Generate t between lower and upper boundary
     t = t_lower + torch.rand(N, 1) * (t_upper - t_lower)
 
     return x, t
@@ -213,71 +175,67 @@ def omega8(N):
 
     return x,t
 
+
 def omega9(N):
-    x = 3 + (2 * torch.pi -3) * torch.rand(N,1)
+    x_start = 0.17 / 0.056   # interface8(x) = 0
 
-    # t lower
+    x = x_start + (2 * torch.pi - x_start) * torch.rand(N, 1)
+
     t_lower = torch.zeros_like(x)
-
-    # t upper
-     
     t_upper = interface8(x)
-    t = t_lower + (t_upper - t_lower) * torch.rand(N,1)
 
-    return x,t
+    t = t_lower + torch.rand(N, 1) * (t_upper - t_lower)
+
+    return x, t
 
 def linedomain1(N):
-    x = torch.linspace(0,2, steps=N)
+    x = torch.linspace(0,2, steps=N).reshape(-1, 1)
     t = interface1(x)
     return x,t
 
 def linedomain2(N):
-    x = torch.linspace(0,4.545, steps=N)
+    x2_max = (1.0 - 0.80) / 0.044
+
+    x = torch.linspace(0, x2_max, steps=N).reshape(-1, 1)
     t = interface2(x)
-    return x,t
+
+    return x, t
 
 def linedomain3(N):
-    x = torch.linspace(0,2 * torch.pi,steps=N)
+    x = torch.linspace(0,2 * torch.pi,steps=N).reshape(-1, 1)
     t = interface3(x)
     return x,t
 
 def linedomain4(N):
-    x = torch.linspace(0,2 * torch.pi,steps=N)
+    x = torch.linspace(0,2 * torch.pi,steps=N).reshape(-1, 1)
     t = interface4(x)
     return x,t
 
 def linedomain5(N):
-    x = torch.linspace(0,2 * torch.pi,steps=N)
+    x = torch.linspace(0,2 * torch.pi,steps=N).reshape(-1, 1)
     t = interface5(x)
     return x,t
 
 def linedomain6(N):
-    x = torch.linspace(0,2 * torch.pi,steps=N)
+    x = torch.linspace(0,2 * torch.pi,steps=N).reshape(-1, 1)
     t = interface6(x)
     return x,t
 
 def linedomain7(N):
-    x = torch.linspace(0,2 * torch.pi,steps=N)
+    x = torch.linspace(0,2 * torch.pi,steps=N).reshape(-1, 1)
     t = interface7(x)
     return x,t
 
 
+
+
 def linedomain8(N):
-    x = torch.linspace(3,2 * torch.pi,steps=N)
+    x_start = 0.17 / 0.056  # where interface8(x) = 0
+
+    x = torch.linspace(x_start, 2 * torch.pi, steps=N).reshape(-1, 1)
     t = interface8(x)
-    return x,t
+
+    return x, t
 
 
-x,t = linedomain8(100)
-plt.scatter(
-    x.numpy(),
-    t.numpy(),
-    linewidths= 2,
-    label=r"100 points in the doamin"
-)
 
-plt.xlim(0,2 * np.pi)
-plt.ylim(0,1)
-plt.grid(True)
-plt.legend()
-plt.show()

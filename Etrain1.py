@@ -26,8 +26,8 @@ import time
 config = Config()
 
 # Training settings
-NUM_ADAM_EPOCHS = 450
-NUM_LBFGS_ITERATIONS = 1000
+NUM_ADAM_EPOCHS = 45000
+NUM_LBFGS_ITERATIONS = 10000
 N_COLLOCATION = 2000
 
 # Create models
