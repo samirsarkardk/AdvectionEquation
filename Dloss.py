@@ -77,10 +77,7 @@ def InitialConditionLoss(model8, model9, M):
     return loss8 + loss9
 
 
-# ==========================================================
-# Interface continuity:
-# u_left(x, s(x)) = u_right(x, s(x))
-# ==========================================================
+
 def InterfaceLoss(left_model, right_model, line_function, M):
     x_interface, t_interface = line_function(M)
 
@@ -93,16 +90,6 @@ def InterfaceLoss(left_model, right_model, line_function, M):
     return criterion(u_left, u_right)
 
 
-# ==========================================================
-# Inflow boundary condition at x = 0
-#
-# For u_t + c*u_x = 0 and c > 0, x = 0 is the inflow edge.
-#
-# With u(x,0) = sin(x) and the periodic solution, the known
-# inflow boundary is:
-#
-# u(0,t) = sin(-c*t)
-# ==========================================================
 def PeriodicBoundaryLoss(models, M):
     """
     Enforce:
@@ -125,14 +112,7 @@ def PeriodicBoundaryLoss(models, M):
         device=DEVICE
     ).reshape(-1, 1)
 
-    # ------------------------------------------------------
-    # Left boundary: x = 0
-    #
-    # model7: 0.00 <= t <= 0.17
-    # model6: 0.17 <= t <= 0.30
-    # ...
-    # model1: 0.90 <= t <= 1.00
-    # ------------------------------------------------------
+    # Left boundary condition
     u_left = torch.zeros_like(t)
 
     left_intervals = [
@@ -159,9 +139,9 @@ def PeriodicBoundaryLoss(models, M):
 
             u_left[point_mask] = model(x_sub, t_sub)
 
-    # ------------------------------------------------------
+ 
     # Right boundary: x = 2*pi
-    # ------------------------------------------------------
+   
     s3_L = 0.048 * L + 0.65
     s4_L = 0.049 * L + 0.50
     s5_L = 0.052 * L + 0.30
