@@ -13,7 +13,7 @@ class Config:
 
         # Training Parameters
         self.num_epochs = 45000
-        self.learning_rate = 0.001
+        self.learning_rate = 0.0005
 
         # Model Parameters for main pinn networks
         self.input_dim = 2

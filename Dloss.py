@@ -14,7 +14,7 @@ criterion = nn.MSELoss()
 W_PDE = 1.0
 W_INITIAL = 1.0
 W_INTERFACE = 1.0
-W_INFLOW = 1.0
+W_PERIODIC = 1.0
 
 
 # ==========================================================
@@ -103,11 +103,39 @@ def InterfaceLoss(left_model, right_model, line_function, M):
 #
 # u(0,t) = sin(-c*t)
 # ==========================================================
-def InflowBoundaryLoss(models, M):
-    model1, model2, model3, model4, model5, model6, model7, _, _ = models
+def PeriodicBoundaryLoss(models, M):
+    """
+    Enforce:
+        u(0, t) = u(2*pi, t)
+    for 0 <= t <= 1.
+    """
 
-    # At x = 0, the subdomains occupy these time intervals:
-    intervals = [
+    (
+        model1, model2, model3,
+        model4, model5, model6,
+        model7, model8, model9
+    ) = models
+
+    L = 2.0 * torch.pi
+
+    t = torch.linspace(
+        0.0,
+        1.0,
+        M,
+        device=DEVICE
+    ).reshape(-1, 1)
+
+    # ------------------------------------------------------
+    # Left boundary: x = 0
+    #
+    # model7: 0.00 <= t <= 0.17
+    # model6: 0.17 <= t <= 0.30
+    # ...
+    # model1: 0.90 <= t <= 1.00
+    # ------------------------------------------------------
+    u_left = torch.zeros_like(t)
+
+    left_intervals = [
         (model7, 0.00, 0.17),
         (model6, 0.17, 0.30),
         (model5, 0.30, 0.50),
@@ -117,26 +145,57 @@ def InflowBoundaryLoss(models, M):
         (model1, 0.90, 1.00),
     ]
 
-    total_loss = torch.tensor(0.0, device=DEVICE)
+    for index, (model, t_min, t_max) in enumerate(left_intervals):
+        if index == len(left_intervals) - 1:
+            mask = (t >= t_min) & (t <= t_max)
+        else:
+            mask = (t >= t_min) & (t < t_max)
 
-    for model, t_min, t_max in intervals:
-        t_boundary = torch.linspace(
-            t_min,
-            t_max,
-            M,
-            device=DEVICE
-        ).reshape(-1, 1)
+        point_mask = mask.squeeze(1)
 
-        x_boundary = torch.zeros_like(t_boundary)
+        if point_mask.any():
+            t_sub = t[point_mask]
+            x_sub = torch.zeros_like(t_sub)
 
-        u_pred = model(x_boundary, t_boundary)
-        u_target = torch.sin(-config.c * t_boundary)
+            u_left[point_mask] = model(x_sub, t_sub)
 
-        total_loss = total_loss + criterion(u_pred, u_target)
+    # ------------------------------------------------------
+    # Right boundary: x = 2*pi
+    # ------------------------------------------------------
+    s3_L = 0.048 * L + 0.65
+    s4_L = 0.049 * L + 0.50
+    s5_L = 0.052 * L + 0.30
+    s6_L = 0.052 * L + 0.17
+    s7_L = 0.053 * L
+    s8_L = 0.056 * L - 0.17
 
-    return total_loss
+    u_right = torch.zeros_like(t)
 
+    right_intervals = [
+        (model9, 0.00, s8_L),
+        (model8, s8_L, s7_L),
+        (model7, s7_L, s6_L),
+        (model6, s6_L, s5_L),
+        (model5, s5_L, s4_L),
+        (model4, s4_L, s3_L),
+        (model3, s3_L, 1.00),
+    ]
 
+    for index, (model, t_min, t_max) in enumerate(right_intervals):
+        if index == len(right_intervals) - 1:
+            mask = (t >= t_min) & (t <= t_max)
+        else:
+            mask = (t >= t_min) & (t < t_max)
+
+        point_mask = mask.squeeze(1)
+
+        if point_mask.any():
+            t_sub = t[point_mask]
+            x_sub = torch.full_like(t_sub, L)
+
+            u_right[point_mask] = model(x_sub, t_sub)
+
+    return criterion(u_left, u_right)
 # ==========================================================
 # Individual PDE losses
 # ==========================================================
@@ -267,14 +326,13 @@ def TotalLoss(models, collocation_points, M_interface=2000, M_boundary=2000):
     )
 
     # Physical inflow boundary at x = 0
-    inflow_loss = InflowBoundaryLoss(models, M_boundary)
-
+    periodic_loss = PeriodicBoundaryLoss(models, M_boundary)
     # Final weighted loss
     total_loss = (
         W_PDE * pde_loss +
         W_INITIAL * initial_loss +
         W_INTERFACE * interface_loss +
-        W_INFLOW * inflow_loss
+        W_PERIODIC * periodic_loss
     )
 
     losses = {
@@ -282,7 +340,7 @@ def TotalLoss(models, collocation_points, M_interface=2000, M_boundary=2000):
         "pde": pde_loss.detach().item(),
         "initial": initial_loss.detach().item(),
         "interface": interface_loss.detach().item(),
-        "inflow": inflow_loss.detach().item(),
+        "periodic": periodic_loss.detach().item(),
     }
 
     return total_loss, losses

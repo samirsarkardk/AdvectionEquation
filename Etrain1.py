@@ -27,7 +27,7 @@ from Dloss import TotalLoss
 # ==========================================================
 config = Config()
 
-NUM_ADAM_EPOCHS = 45000
+NUM_ADAM_EPOCHS = 30000
 NUM_LBFGS_ITERATIONS = 10000
 
 N_COLLOCATION = 2000
@@ -134,7 +134,7 @@ for epoch in range(NUM_ADAM_EPOCHS):
             f"PDE: {loss_values['pde']:.6e} | "
             f"Initial: {loss_values['initial']:.6e} | "
             f"Interface: {loss_values['interface']:.6e} | "
-            f"Inflow: {loss_values['inflow']:.6e}"
+            f"Periodic: {loss_values['periodic']:.6e}"
         )
 
 
@@ -182,7 +182,7 @@ def closure():
             f"PDE: {loss_values['pde']:.6e} | "
             f"Initial: {loss_values['initial']:.6e} | "
             f"Interface: {loss_values['interface']:.6e} | "
-            f"Inflow: {loss_values['inflow']:.6e}"
+            f"Periodic: {loss_values['periodic']:.6e}"
         )
 
     return total_loss
@@ -209,7 +209,7 @@ print(
     f"PDE: {final_loss_values['pde']:.6e} | "
     f"Initial: {final_loss_values['initial']:.6e} | "
     f"Interface: {final_loss_values['interface']:.6e} | "
-    f"Inflow: {final_loss_values['inflow']:.6e}"
+    f"Periodic: {loss_values['periodic']:.6e}"
 )
 print(f"Total training time: {elapsed_time / 60:.2f} minutes")
 
